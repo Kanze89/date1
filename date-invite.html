@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Date Night Invite 💙</title>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       margin: 0;
@@ -16,7 +17,8 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
     }
     h1 {
       font-family: 'Pacifico', cursive;
@@ -24,12 +26,14 @@
       margin-bottom: 0.5em;
       color: #1e90ff;
       text-align: center;
+      z-index: 1;
     }
     p {
       font-size: 1.2em;
       text-align: center;
       max-width: 600px;
       margin: 0 auto 20px auto;
+      z-index: 1;
     }
     .start-card, .card {
       background: #ffffff;
@@ -37,9 +41,10 @@
       padding: 30px 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       margin: 20px;
-      width: 100%;
+      width: 90%;
       max-width: 400px;
       text-align: center;
+      z-index: 1;
     }
     .yes-no {
       display: flex;
@@ -112,13 +117,69 @@
       font-size: 1.2em;
       color: #1e90ff;
     }
-    #mainCard { display: none; }
+
+    /* Slide-in animation */
+    #mainCard {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+    #mainCard.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Floating hearts */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      bottom: -50px;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(45deg);
+      animation: floatUp 6s linear infinite;
+      opacity: 0.6;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+    .heart::before { top: -10px; left: 0; }
+    .heart::after { left: -10px; top: 0; }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(45deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>💙 Will You Go On a Cute Little Date With Me?</h1>
+  <p>June 30th. Me & You. Say yes? 💌</p>
+
   <div class="start-card" id="startCard">
-    <p>June 30th. Me & You. Say yes? 💌</p>
     <div class="yes-no">
       <button id="yesBtn" onclick="showForm()">Yes 💖</button>
       <button id="noBtn" onmouseover="runAway(this)">No 😢</button>
@@ -143,10 +204,19 @@
     <div class="result" id="result"></div>
   </div>
 
+  <div class="hearts-container" aria-hidden="true">
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+  </div>
+
   <script>
     function showForm() {
       document.getElementById('startCard').style.display = 'none';
-      document.getElementById('mainCard').style.display = 'block';
+      const main = document.getElementById('mainCard');
+      main.classList.add('visible');
     }
 
     function confirmDate() {
@@ -154,6 +224,8 @@
       const time = document.getElementById('time').value;
       const resultDiv = document.getElementById('result');
       resultDiv.innerText = `Yay! It's a date: ${restaurant} at ${time} 💕`;
+
+      // Optional: Send to Google Sheet here using fetch()
     }
 
     function runAway(button) {
@@ -165,6 +237,12 @@
       button.style.left = `${newX}px`;
       button.style.top = `${newY}px`;
     }
+
+    // Randomize hearts on load
+    document.querySelectorAll('.heart').forEach(heart => {
+      heart.style.left = `${Math.random() * 100}vw`;
+      heart.style.animationDuration = `${4 + Math.random() * 3}s`;
+    });
   </script>
 </body>
 </html>
