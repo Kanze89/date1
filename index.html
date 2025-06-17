@@ -164,14 +164,8 @@
     .heart::after { left: -10px; top: 0; }
 
     @keyframes floatUp {
-      0% {
-        transform: translateY(0) rotate(45deg);
-        opacity: 0.6;
-      }
-      100% {
-        transform: translateY(-120vh) rotate(45deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+      100% { transform: translateY(-120vh) rotate(45deg); opacity: 0; }
     }
   </style>
 </head>
@@ -215,8 +209,7 @@
   <script>
     function showForm() {
       document.getElementById('startCard').style.display = 'none';
-      const main = document.getElementById('mainCard');
-      main.classList.add('visible');
+      document.getElementById('mainCard').classList.add('visible');
     }
 
     function confirmDate() {
@@ -225,7 +218,19 @@
       const resultDiv = document.getElementById('result');
       resultDiv.innerText = `Yay! It's a date: ${restaurant} at ${time} 💕`;
 
-      // Optional: Send to Google Sheet here using fetch()
+      // 🔒 Send to Google Sheet
+      fetch("https://script.google.com/macros/s/AKfycbyN38IN5Q5yvQzbLoiO3Hp8nNw9kLYvKhVk2YRfxr8HwxEpV6bKBTVmWH42onauNJXnPg/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ restaurant, time })
+      });
+
+      // 💌 Redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = "thankyou.html";
+      }, 3000);
     }
 
     function runAway(button) {
@@ -238,7 +243,7 @@
       button.style.top = `${newY}px`;
     }
 
-    // Randomize hearts on load
+    // 🎈 Animate floating hearts
     document.querySelectorAll('.heart').forEach(heart => {
       heart.style.left = `${Math.random() * 100}vw`;
       heart.style.animationDuration = `${4 + Math.random() * 3}s`;
